@@ -1,7 +1,9 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import midy from "../../index";
 
+console.log(midy);
 class App extends Component {
   render() {
     return (
