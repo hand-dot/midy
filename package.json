@@ -1,0 +1,23 @@
+{
+  "name": "midy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hand-dot/midy.git"
+  },
+  "author": "hand-dot <kyouhei.fukuda0729@gmail.com> (https://github.com/hand-dot)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hand-dot/midy/issues"
+  },
+  "homepage": "https://github.com/hand-dot/midy#readme",
+  "dependencies": {
+    "@tonejs/midi": "^1.2.3",
+    "tone": "^13.4.9"
+  }
+}
