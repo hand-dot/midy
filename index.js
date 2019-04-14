@@ -1,55 +1,19 @@
-import Tone from "tone";
-import Midi from "@tonejs/midi/build/Midi";
+const Tone = require("tone");
+const Midi = require("@tonejs/midi/build/Midi");
 
 const synths = [];
 
 const mySynth = {
-  NoiseSynth: new Tone.NoiseSynth(),
-  Synth: new Tone.Synth(),
-  AMSynth: new Tone.AMSynth(),
-  DuoSynth: new Tone.DuoSynth(),
-  FMSynth: new Tone.FMSynth(),
-  MonoSynth: new Tone.MonoSynth(),
-  PluckSynth: new Tone.PluckSynth(),
-  MetalSynth: new Tone.MetalSynth(),
-  PolySynth: new Tone.PolySynth(),
-  Monophonic: new Tone.Monophonic(),
-  MembraneSynth: new Tone.MembraneSynth()
+  Synth: Tone.Synth,
+  MonoSynth: Tone.MonoSynth,
+  FMSynth: Tone.FMSynth,
+  AMSynth: Tone.AMSynth,
+  PolySynth: Tone.PolySynth
 };
 
-const synthGen = (name = "PolySynth") => {
-  return mySynth[name];
-};
+const getSynthNames = () => Object.keys(mySynth);
 
-const getSynthNameByIndex = index => {
-  if (index === 0) {
-    return "NoiseSynth";
-  } else if (index === 1) {
-    return "Synth";
-  } else if (index === 2) {
-    return "AMSynth";
-  } else if (index === 3) {
-    return "DuoSynth";
-  } else if (index === 4) {
-    return "FMSynth";
-  } else if (index === 5) {
-    return "NoiseSynth";
-  } else if (index === 6) {
-    return "PluckSynth";
-  } else if (index === 7) {
-    return "MetalSynth";
-  } else if (index === 8) {
-    return "PolySynth";
-  } else if (index === 9) {
-    return "Monophonic";
-  } else if (index === 10) {
-    return "MembraneSynth";
-  } else {
-    return "PolySynth";
-  }
-};
-
-export const parseFile = (file, cb) => {
+const parse = (file, cb) => {
   const reader = new FileReader();
   reader.onload = e => {
     const midi = new Midi(e.target.result);
@@ -58,18 +22,13 @@ export const parseFile = (file, cb) => {
   reader.readAsArrayBuffer(file);
 };
 
-export const play = midi => {
-  if (midi) {
-    const now = Tone.now() + 0.5;
-    midi.tracks.forEach((track, index) => {
-      //create a synth for each track
-      const synthName = getSynthNameByIndex(index);
-      console.log("trackNo", index);
-      console.log("track.name", track.name);
-      console.log("synthName", synthName);
-      const synth = synthGen(synthName).toMaster();
+const play = (midiTacks, loadStartCb, loadEndCb) => {
+  if (loadStartCb) loadStartCb();
+  if (midiTacks) {
+    const now = Tone.now();
+    midiTacks.forEach(track => {
+      const synth = new mySynth[track.synthName]().toMaster();
       synths.push(synth);
-      //schedule all of the events
       track.notes.forEach(note => {
         synth.triggerAttackRelease(
           note.name,
@@ -80,11 +39,14 @@ export const play = midi => {
       });
     });
   }
+  if (loadEndCb) loadEndCb();
 };
 
-export const stop = () => {
+const stop = () => {
   while (synths.length) {
     const synth = synths.shift();
     synth.dispose();
   }
 };
+
+export default { parse, play, stop, getSynthNames };
